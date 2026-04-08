@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>V4 Company — Análise de Criativos</title>
+
+  <!-- V4 Typography — Montserrat -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+
+  <!-- Chart.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+  <!-- html2canvas -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <style>
+    /* ── V4 Brand Tokens (from brand.v4company.com) ── */
+    :root {
+      --red-1:   #e50914;   /* primary / bright red  */
+      --red-2:   #b20710;   /* medium red             */
+      --red-3:   #80050b;   /* dark red               */
+      --red-4:   #400306;   /* deepest red            */
+      --black:   #000000;
+      --card:    #0d0d0d;
+      --card2:   #161616;
+      --border:  #1f1f1f;
+      --text:    #ffffff;
+      --muted:   #6b6b6b;
+      --muted2:  #9a9a9a;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: var(--black);
+      color: var(--text);
+      padding: 48px 32px 72px;
+    }
+
+    /* ── Header ─────────────────────────────────────── */
+    .header {
+      max-width: 920px;
+      margin: 0 auto 52px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      border-bottom: 2px solid var(--red-1);
+      padding-bottom: 22px;
+      gap: 24px;
+    }
+
+    .logo {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 44px;
+      font-weight: 900;
+      color: var(--text);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      line-height: 1;
+    }
+    .logo span { color: var(--red-1); }
+
+    .header-right h1 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text);
+      text-transform: uppercase;
+      letter-spacing: 2.5px;
+      text-align: right;
+    }
+    .header-right p {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted2);
+      margin-top: 6px;
+      text-align: right;
+      letter-spacing: 1px;
+    }
+
+    /* ── Download All ────────────────────────────────── */
+    .top-bar {
+      max-width: 920px;
+      margin: 0 auto 32px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 30px;
+      background: var(--red-1);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .btn-primary:hover    { background: var(--red-2); }
+    .btn-primary:disabled { opacity: .45; cursor: default; }
+
+    /* ── Grid — coluna única vertical ───────────────── */
+    .grid {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      max-width: 920px;
+      margin: 0 auto;
+    }
+
+    /* ── Card ────────────────────────────────────────── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--red-1);
+      border-radius: 12px;
+      padding: 26px 26px 20px;
+      position: relative;
+    }
+
+    /* ── Card Header ─────────────────────────────────── */
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 20px;
+      gap: 12px;
+    }
+
+    .card-meta { flex: 1; }
+
+    .card-num {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--red-1);
+      text-transform: uppercase;
+      letter-spacing: 2.5px;
+      margin-bottom: 5px;
+    }
+
+    .card-name {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--text);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      line-height: 1.25;
+    }
+
+    .type-badge {
+      flex-shrink: 0;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 6px 14px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      white-space: nowrap;
+    }
+    .type-badge.video  { background: rgba(229,9,20,.18); color: var(--red-1); border: 1px solid rgba(229,9,20,.35); }
+    .type-badge.static { background: rgba(255,255,255,.06); color: var(--muted2); border: 1px solid var(--border); }
+
+    /* ── KPIs ────────────────────────────────────────── */
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+
+    .kpi {
+      background: var(--card2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 8px;
+      text-align: center;
+    }
+
+    .kpi-lbl {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 7px;
+    }
+
+    .kpi-val {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: 0px;
+      line-height: 1;
+    }
+    .kpi-val.red   { color: var(--red-1); }
+    .kpi-val.green { color: #00c896; }
+
+    /* ── Chart Canvas ────────────────────────────────── */
+    .chart-area {
+      position: relative;
+      height: 260px;
+      margin-bottom: 14px;
+    }
+
+    /* ── Funnel Stage Labels ─────────────────────────── */
+    .stage-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 18px;
+      gap: 4px;
+    }
+    .stage-item {
+      flex: 1;
+      text-align: center;
+    }
+    .stage-val {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--text);
+      display: block;
+      line-height: 1;
+    }
+    .stage-lbl {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 4px;
+      display: block;
+    }
+    .stage-arrow {
+      color: var(--border);
+      font-size: 20px;
+      flex-shrink: 0;
+      padding-bottom: 10px;
+    }
+    .stage-pct {
+      display: block;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--red-1);
+      margin-top: 4px;
+    }
+
+    /* ── Download Button ─────────────────────────────── */
+    .dl-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--muted2);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.8px;
+      cursor: pointer;
+      transition: all .18s;
+    }
+    .dl-btn:hover {
+      border-color: var(--red-1);
+      color: var(--red-1);
+      background: rgba(229,9,20,.06);
+    }
+    .dl-btn:disabled { opacity: .35; cursor: default; }
+
+    /* ── Footer ──────────────────────────────────────── */
+    .footer {
+      max-width: 920px;
+      margin: 56px auto 0;
+      border-top: 1px solid var(--border);
+      padding-top: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-txt { font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 500; color: var(--muted); letter-spacing: 1px; }
+    .footer-logo {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 16px;
+      font-weight: 900;
+      color: var(--text);
+      text-transform: uppercase;
+      letter-spacing: 3px;
+    }
+    .footer-logo span { color: var(--red-1); }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="logo">V4<span>Company</span></div>
+  <div class="header-right">
+    <h1>Análise de Criativos — Performance Dashboard</h1>
+    <p>7 Criativos &nbsp;·&nbsp; Funil Lead → Venda &nbsp;·&nbsp; Métricas Principais</p>
+  </div>
+</header>
+
+<!-- DOWNLOAD ALL -->
+<div class="top-bar">
+  <button class="btn-primary" id="dlAllBtn" onclick="downloadAll()">
+    ↓ &nbsp;Baixar todos (7 PNGs)
+  </button>
+</div>
+
+<!-- GRID -->
+<div class="grid" id="grid"></div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <span class="footer-txt">Análise de performance · 7 criativos · 2025</span>
+  <div class="footer-logo">V4<span>Company</span></div>
+</footer>
+
+<!-- ─────────────────────────────────────────────────── -->
+<script>
+/* ── DATASET ─────────────────────────────────────────── */
+const creatives = [
+  {
+    id: 'AD 02 · Criativo 01',
+    name: 'Sua Fórmula Tão Boa',
+    type: 'Vídeo',
+    kpis: {
+      'Investimento': { val: 'R$ 4.836,57', cls: '' },
+      'CPL':          { val: 'R$ 107,48',   cls: 'red' },
+      'CTR':          { val: '0,61%',        cls: '' },
+      'Faturamento':  { val: 'R$ 12.700',   cls: 'green' }
+    },
+    funnel: { Leads: 45, MQL: 12, Conexão: 5, SQL: 3, Venda: 2 }
+  },
+  {
+    id: 'AD 01 · Criativo 02',
+    name: 'Gerente de P&D',
+    type: 'Vídeo',
+    kpis: {
+      'Investimento': { val: 'R$ 744,03',  cls: '' },
+      'CPL':          { val: 'R$ 106,29',  cls: 'red' },
+      'CTR':          { val: '1,06%',       cls: '' },
+      'Faturamento':  { val: 'R$ 2.700',   cls: 'green' }
+    },
+    funnel: { Leads: 7, MQL: 1, Conexão: 1, SQL: 1, Venda: 1 }
+  },
+  {
+    id: 'AD 01 · Criativo 03',
+    name: 'Cansado de Fornecedores Químicos',
+    type: 'Vídeo',
+    kpis: {
+      'Investimento': { val: 'R$ 1.575,27', cls: '' },
+      'CPL':          { val: 'R$ 98,45',    cls: 'red' },
+      'CTR':          { val: '0,58%',        cls: '' },
+      'Faturamento':  { val: '—',            cls: '' }
+    },
+    funnel: { Leads: 16, MQL: 3, Conexão: 2, SQL: 0, Venda: 0 }
+  },
+  {
+    id: 'AD 01 · Criativo 04',
+    name: 'Sua Formulação Nossa Expertise',
+    type: 'Estático',
+    kpis: {
+      'Investimento': { val: 'R$ 1.662,61', cls: '' },
+      'CPL':          { val: 'R$ 166,26',   cls: 'red' },
+      'CTR':          { val: '0,70%',        cls: '' },
+      'Faturamento':  { val: '—',            cls: '' }
+    },
+    funnel: { Leads: 10, MQL: 0, Conexão: 0, SQL: 0, Venda: 0 }
+  },
+  {
+    id: 'AD 01 · Criativo 05',
+    name: 'O Especialista Que Sua Formulação Precisa',
+    type: 'Estático',
+    kpis: {
+      'Investimento': { val: 'R$ 1.384,78', cls: '' },
+      'CPL':          { val: 'R$ 92,32',    cls: 'red' },
+      'CTR':          { val: '1,18%',        cls: '' },
+      'Faturamento':  { val: '—',            cls: '' }
+    },
+    funnel: { Leads: 15, MQL: 0, Conexão: 0, SQL: 0, Venda: 0 }
+  },
+  {
+    id: 'AD 01 · Criativo 06',
+    name: 'Qualidade Que Gera Resultados',
+    type: 'Estático',
+    kpis: {
+      'Investimento': { val: 'R$ 815,55',  cls: '' },
+      'CPL':          { val: 'R$ 163,11',  cls: 'red' },
+      'CTR':          { val: '1,43%',       cls: '' },
+      'Faturamento':  { val: '—',           cls: '' }
+    },
+    funnel: { Leads: 5, MQL: 0, Conexão: 0, SQL: 0, Venda: 0 }
+  },
+  {
+    id: 'AD 01 · Criativo 07',
+    name: 'No Setor Químico',
+    type: 'Vídeo',
+    kpis: {
+      'Investimento': { val: 'R$ 130,00', cls: '' },
+      'CPL':          { val: '—',          cls: '' },
+      'CTR':          { val: '0,36%',      cls: '' },
+      'Faturamento':  { val: '—',          cls: '' }
+    },
+    funnel: { Leads: 0, MQL: 0, Conexão: 0, SQL: 0, Venda: 0 }
+  }
+];
+
+/* ── V4 RED PALETTE → funnel gradient ───────────────── */
+const RED_PALETTE = [
+  '#e50914',  // Leads   — primary red
+  '#c4080f',  // MQL
+  '#a3060c',  // Conexão
+  '#80050b',  // SQL
+  '#400306'   // Venda   — deepest
+];
+
+/* ── BUILD CARDS ─────────────────────────────────────── */
+const grid = document.getElementById('grid');
+
+creatives.forEach((c, i) => {
+  const cardIdx  = i + 1;
+  const labels   = Object.keys(c.funnel);
+  const values   = Object.values(c.funnel);
+  const isVideo  = c.type === 'Vídeo';
+
+  // Conversion rates between adjacent funnel stages
+  const pcts = values.map((v, j) => {
+    if (j === 0) return '';
+    const prev = values[j - 1];
+    return prev > 0 ? Math.round((v / prev) * 100) + '%' : '0%';
+  });
+
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.id        = `card-${cardIdx}`;
+
+  // KPI HTML
+  const kpiHTML = Object.entries(c.kpis).map(([lbl, { val, cls }]) => `
+    <div class="kpi">
+      <div class="kpi-lbl">${lbl}</div>
+      <div class="kpi-val ${cls}">${val}</div>
+    </div>`).join('');
+
+  // Stage row HTML
+  const stageHTML = labels.map((lbl, j) => `
+    ${j > 0 ? `<div class="stage-arrow">›</div>` : ''}
+    <div class="stage-item">
+      <span class="stage-val">${values[j]}</span>
+      <span class="stage-lbl">${lbl}</span>
+      ${pcts[j] ? `<span class="stage-pct">↓ ${pcts[j]}</span>` : ''}
+    </div>`).join('');
+
+  card.innerHTML = `
+    <div class="card-head">
+      <div class="card-meta">
+        <div class="card-num">${c.id}</div>
+        <div class="card-name">${c.name}</div>
+      </div>
+      <div class="type-badge ${isVideo ? 'video' : 'static'}">${c.type}</div>
+    </div>
+
+    <div class="kpis">${kpiHTML}</div>
+
+    <div class="chart-area">
+      <canvas id="chart-${cardIdx}"></canvas>
+    </div>
+
+    <div class="stage-row">${stageHTML}</div>
+
+    <button class="dl-btn" id="dlbtn-${cardIdx}"
+      onclick="downloadCard(${cardIdx}, '${c.name.replace(/'/g,"\\'")}')">
+      ↓ &nbsp;Baixar PNG — ${c.name}
+    </button>
+  `;
+
+  grid.appendChild(card);
+
+  /* ── Chart.js bar chart ────────────────────────────── */
+  const ctx = document.getElementById(`chart-${cardIdx}`).getContext('2d');
+
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Volume',
+        data:  values,
+        backgroundColor: RED_PALETTE.slice(0, values.length),
+        borderColor:     'transparent',
+        borderRadius:    6,
+        borderSkipped:   false,
+        barThickness:    30
+      }]
+    },
+    options: {
+      responsive:          true,
+      maintainAspectRatio: false,
+      indexAxis:           'y',
+      animation: { duration: 500 },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#111',
+          titleColor:      '#e50914',
+          bodyColor:       '#fff',
+          borderColor:     '#222',
+          borderWidth:     1,
+          padding:         12,
+          titleFont: { family: 'Montserrat', weight: '800', size: 14 },
+          bodyFont:  { family: 'Montserrat', size: 13 },
+          callbacks: {
+            label: ctx => {
+              const base = values[0];
+              const pct  = base > 0
+                ? ` · ${Math.round((ctx.parsed.y / base) * 100)}% dos leads`
+                : '';
+              return `  ${ctx.parsed.y} unidades${pct}`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid:   { color: 'rgba(255,255,255,0.05)', drawBorder: false },
+          border: { display: false },
+          ticks:  {
+            color:     '#6b6b6b',
+            font:      { family: 'Montserrat', size: 12 },
+            precision: 0,
+            stepSize:  5
+          },
+          beginAtZero: true
+        },
+        y: {
+          grid:   { color: 'rgba(255,255,255,0.0)', drawBorder: false },
+          border: { display: false },
+          ticks:  {
+            color: '#9a9a9a',
+            font:  { family: 'Montserrat', size: 13, weight: '700' },
+            maxRotation: 0
+          }
+        }
+      }
+    }
+  });
+});
+
+/* ── DOWNLOAD SINGLE CARD ────────────────────────────── */
+async function downloadCard(idx, name) {
+  const card = document.getElementById(`card-${idx}`);
+  const btn  = document.getElementById(`dlbtn-${idx}`);
+  const orig = btn.textContent;
+  btn.textContent = 'Gerando PNG…';
+  btn.disabled    = true;
+  try {
+    const canvas = await html2canvas(card, {
+      backgroundColor: '#0d0d0d',
+      scale:           3,
+      useCORS:         true,
+      logging:         false
+    });
+    const a      = document.createElement('a');
+    a.download   = `v4-criativo-${idx}-${name.toLowerCase().replace(/[\s&]/g,'-').replace(/[^a-z0-9-]/g,'')}.png`;
+    a.href       = canvas.toDataURL('image/png');
+    a.click();
+  } catch (e) { alert('Erro ao gerar PNG.'); }
+  finally {
+    btn.textContent = orig;
+    btn.disabled    = false;
+  }
+}
+
+/* ── DOWNLOAD ALL ────────────────────────────────────── */
+async function downloadAll() {
+  const btn  = document.getElementById('dlAllBtn');
+  btn.textContent = 'Gerando todos…';
+  btn.disabled    = true;
+  for (let i = 1; i <= creatives.length; i++) {
+    const card = document.getElementById(`card-${i}`);
+    const cv   = await html2canvas(card, {
+      backgroundColor: '#0d0d0d', scale: 3, useCORS: true, logging: false
+    });
+    const a    = document.createElement('a');
+    a.download = `v4-criativo-${i}.png`;
+    a.href     = cv.toDataURL('image/png');
+    a.click();
+    await new Promise(r => setTimeout(r, 450));
+  }
+  btn.textContent = '↓ \u00a0Baixar todos (7 PNGs)';
+  btn.disabled    = false;
+}
+</script>
+</body>
+</html>
