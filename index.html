@@ -5,415 +5,73 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>V4 Company — Gerador de Criativos</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet"/>
+
+  <!-- Third-party libraries -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-  <style>
-    :root {
-      --red-1:  #e50914;
-      --red-2:  #b20710;
-      --red-3:  #80050b;
-      --red-4:  #400306;
-      --black:  #000000;
-      --card:   #0d0d0d;
-      --card2:  #161616;
-      --border: #1f1f1f;
-      --text:   #ffffff;
-      --muted:  #6b6b6b;
-      --muted2: #9a9a9a;
-      --sb-bg:  #080808;
-      --inp-bg: #111111;
-      --inp-bd: #2a2a2a;
-    }
-
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: 'Montserrat', sans-serif;
-      background: var(--black);
-      color: var(--text);
-      height: 100vh;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-    }
-
-    /* ── Top Bar ── */
-    .topbar {
-      flex-shrink: 0;
-      background: var(--card);
-      border-bottom: 2px solid var(--red-1);
-      padding: 0 28px;
-      height: 60px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      z-index: 50;
-    }
-    .logo { font-size: 26px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; white-space: nowrap; }
-    .logo span { color: var(--red-1); }
-    .topbar-center { text-align: center; }
-    .topbar-center h1 { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; }
-    .topbar-center p  { font-size: 11px; color: var(--muted2); margin-top: 3px; }
-
-    /* ── Layout ── */
-    .layout {
-      flex: 1;
-      display: flex;
-      overflow: hidden;
-    }
-
-    /* ── Sidebar ── */
-    .sidebar {
-      width: 360px;
-      min-width: 280px;
-      background: var(--sb-bg);
-      border-right: 1px solid var(--border);
-      overflow-y: auto;
-      padding: 20px 16px 32px;
-      flex-shrink: 0;
-      scrollbar-width: thin;
-      scrollbar-color: #222 transparent;
-    }
-    .sidebar::-webkit-scrollbar { width: 4px; }
-    .sidebar::-webkit-scrollbar-track { background: transparent; }
-    .sidebar::-webkit-scrollbar-thumb { background: #222; border-radius: 2px; }
-
-    /* ── Preview ── */
-    .preview {
-      flex: 1;
-      overflow-y: auto;
-      padding: 28px 32px 60px;
-      scrollbar-width: thin;
-      scrollbar-color: #222 transparent;
-    }
-    .preview::-webkit-scrollbar { width: 4px; }
-    .preview::-webkit-scrollbar-track { background: transparent; }
-    .preview::-webkit-scrollbar-thumb { background: #222; border-radius: 2px; }
-
-    /* ── Section Title ── */
-    .section-title {
-      font-size: 9px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 2.5px;
-      color: var(--red-1);
-      margin-bottom: 12px;
-      padding-bottom: 8px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    /* ── Form ── */
-    .form-group { margin-bottom: 12px; }
-    .form-label {
-      display: block;
-      font-size: 9px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      color: var(--muted2);
-      margin-bottom: 5px;
-    }
-    .form-input {
-      width: 100%;
-      background: var(--inp-bg);
-      border: 1px solid var(--inp-bd);
-      border-radius: 5px;
-      padding: 8px 10px;
-      color: var(--text);
-      font-family: 'Montserrat', sans-serif;
-      font-size: 12px;
-      font-weight: 500;
-      outline: none;
-      transition: border-color .15s;
-    }
-    .form-input:focus { border-color: var(--red-1); }
-    select.form-input { cursor: pointer; }
-    input[type=number].form-input { -moz-appearance: textfield; }
-    input[type=number].form-input::-webkit-inner-spin-button { display: none; }
-
-    .form-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-
-    /* ── Creative Item ── */
-    .creative-list { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
-
-    .creative-item {
-      background: var(--card2);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      overflow: hidden;
-    }
-
-    .creative-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px 12px;
-      cursor: pointer;
-      user-select: none;
-      gap: 8px;
-    }
-    .creative-header:hover { background: rgba(255,255,255,.02); }
-
-    .creative-hd-left { display: flex; align-items: center; gap: 8px; min-width: 0; }
-    .creative-idx {
-      font-size: 9px; font-weight: 800; color: var(--red-1);
-      text-transform: uppercase; letter-spacing: 1.5px; flex-shrink: 0;
-    }
-    .creative-hd-name {
-      font-size: 12px; font-weight: 700;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-    .toggle-arrow { font-size: 14px; color: var(--muted); transition: transform .2s; flex-shrink: 0; }
-    .creative-item.open .toggle-arrow { transform: rotate(90deg); }
-
-    .creative-body { display: none; padding: 12px; border-top: 1px solid var(--border); }
-    .creative-item.open .creative-body { display: block; }
-
-    /* ── Sub-label ── */
-    .sub-label {
-      font-size: 9px; font-weight: 800; text-transform: uppercase;
-      letter-spacing: 1.8px; color: var(--muted);
-      margin: 12px 0 7px;
-      display: flex; align-items: center; gap: 6px;
-    }
-    .sub-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-
-    /* ── Inline rows for KPI / Funnel ── */
-    .inline-row {
-      display: grid;
-      gap: 4px;
-      margin-bottom: 5px;
-      align-items: center;
-    }
-    .inline-row .form-input { padding: 5px 7px; font-size: 11px; }
-
-    /* ── Buttons ── */
-    .btn { font-family: 'Montserrat', sans-serif; font-weight: 800; border: none; cursor: pointer; transition: all .15s; text-transform: uppercase; letter-spacing: 1.5px; border-radius: 5px; }
-
-    .btn-primary {
-      background: var(--red-1); color: #fff;
-      padding: 11px 22px; font-size: 11px;
-      display: inline-flex; align-items: center; gap: 7px;
-    }
-    .btn-primary:hover    { background: var(--red-2); }
-    .btn-primary:disabled { opacity: .4; cursor: default; }
-
-    .btn-outline {
-      background: transparent; color: var(--muted2);
-      border: 1px solid var(--border);
-      padding: 11px 20px; font-size: 11px;
-      display: inline-flex; align-items: center; gap: 7px;
-    }
-    .btn-outline:hover { border-color: var(--red-1); color: var(--red-1); background: rgba(229,9,20,.05); }
-    .btn-outline:disabled { opacity: .4; cursor: default; }
-
-    .btn-add {
-      background: rgba(229,9,20,.1); color: var(--red-1);
-      border: 1px solid rgba(229,9,20,.25);
-      padding: 5px 10px; font-size: 9px;
-    }
-    .btn-add:hover { background: rgba(229,9,20,.2); }
-
-    .btn-rm {
-      background: rgba(255,255,255,.04); color: var(--muted);
-      border: 1px solid var(--border);
-      padding: 5px 7px; font-size: 12px; line-height: 1;
-    }
-    .btn-rm:hover { color: var(--red-1); border-color: rgba(229,9,20,.4); }
-
-    .btn-danger {
-      background: rgba(229,9,20,.07); color: #c0392b;
-      border: 1px solid rgba(229,9,20,.18);
-      padding: 7px 12px; font-size: 9px; width: 100%;
-    }
-    .btn-danger:hover { background: rgba(229,9,20,.16); color: var(--red-1); }
-
-    .btn-cta {
-      width: 100%; margin-top: 12px;
-      background: transparent; color: var(--red-1);
-      border: 1px dashed rgba(229,9,20,.35);
-      padding: 12px; font-size: 10px;
-      display: flex; align-items: center; justify-content: center; gap: 6px;
-      border-radius: 7px;
-    }
-    .btn-cta:hover { background: rgba(229,9,20,.06); border-color: var(--red-1); }
-
-    .row-actions { display: flex; gap: 6px; margin-top: 6px; }
-
-    hr.divider { border: none; border-top: 1px solid var(--border); margin: 12px 0; }
-
-    /* ── Preview Cards ── */
-    .preview-topbar {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 24px; gap: 12px;
-    }
-    .preview-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: var(--muted); }
-
-    /* Report header in preview */
-    .rpt-header {
-      max-width: 880px;
-      display: flex; align-items: flex-end; justify-content: space-between;
-      border-bottom: 2px solid var(--red-1); padding-bottom: 16px;
-      margin-bottom: 28px; gap: 20px;
-    }
-    .rpt-logo { font-size: 32px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; }
-    .rpt-logo span { color: var(--red-1); }
-    .rpt-right { text-align: right; }
-    .rpt-title { font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; }
-    .rpt-sub   { font-size: 12px; color: var(--muted2); margin-top: 5px; letter-spacing: 1px; }
-
-    /* Card */
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-top: 3px solid var(--red-1);
-      border-radius: 12px;
-      padding: 24px 24px 18px;
-      max-width: 880px;
-      margin-bottom: 24px;
-    }
-    .card-head {
-      display: flex; justify-content: space-between;
-      align-items: flex-start; margin-bottom: 18px; gap: 12px;
-    }
-    .card-meta { flex: 1; }
-    .card-num {
-      font-size: 10px; font-weight: 700; color: var(--red-1);
-      text-transform: uppercase; letter-spacing: 2.5px; margin-bottom: 4px;
-    }
-    .card-name {
-      font-size: 16px; font-weight: 800; text-transform: uppercase; line-height: 1.25;
-    }
-    .type-badge {
-      font-size: 9px; font-weight: 800; padding: 5px 12px;
-      border-radius: 4px; text-transform: uppercase; letter-spacing: 1.5px; flex-shrink: 0;
-    }
-    .type-badge.video  { background: rgba(229,9,20,.18); color: var(--red-1); border: 1px solid rgba(229,9,20,.35); }
-    .type-badge.static { background: rgba(255,255,255,.06); color: var(--muted2); border: 1px solid var(--border); }
-
-    .kpis {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-      gap: 8px; margin-bottom: 20px;
-    }
-    .kpi {
-      background: var(--card2); border: 1px solid var(--border);
-      border-radius: 7px; padding: 10px 6px; text-align: center;
-    }
-    .kpi-lbl {
-      font-size: 8px; font-weight: 700; color: var(--muted);
-      text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 6px;
-    }
-    .kpi-val { font-size: 15px; font-weight: 800; line-height: 1; }
-    .kpi-val.red   { color: var(--red-1); }
-    .kpi-val.green { color: #00c896; }
-    .kpi-val.white { color: var(--text); }
-    .kpi-val.muted { color: var(--muted2); }
-
-    .chart-area { position: relative; margin-bottom: 12px; }
-
-    .stage-row {
-      display: flex; align-items: center;
-      margin-bottom: 16px; gap: 3px; flex-wrap: wrap;
-    }
-    .stage-item { flex: 1; text-align: center; min-width: 50px; }
-    .stage-val { font-size: 20px; font-weight: 800; display: block; line-height: 1; }
-    .stage-lbl {
-      font-size: 9px; font-weight: 600; color: var(--muted);
-      text-transform: uppercase; letter-spacing: 1px; margin-top: 3px; display: block;
-    }
-    .stage-arrow { color: var(--border); font-size: 18px; flex-shrink: 0; padding-bottom: 8px; }
-    .stage-pct  {
-      display: block; font-size: 10px; font-weight: 700;
-      color: var(--red-1); margin-top: 3px;
-    }
-
-    .dl-btn {
-      width: 100%; display: flex; align-items: center; justify-content: center; gap: 7px;
-      padding: 11px; background: transparent; border: 1px solid var(--border); border-radius: 5px;
-      color: var(--muted2); font-family: 'Montserrat', sans-serif; font-size: 10px; font-weight: 700;
-      text-transform: uppercase; letter-spacing: 1.8px; cursor: pointer; transition: all .18s;
-    }
-    .dl-btn:hover { border-color: var(--red-1); color: var(--red-1); background: rgba(229,9,20,.05); }
-    .dl-btn:disabled { opacity: .35; cursor: default; }
-
-    .empty-state {
-      text-align: center; padding: 80px 20px; color: var(--muted);
-    }
-    .empty-state h3 { font-size: 16px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
-    .empty-state p  { font-size: 13px; }
-
-    /* color dot in select */
-    option[value="red"]   { color: #e50914; }
-    option[value="green"] { color: #00c896; }
-  </style>
+  <!-- Application styles -->
+  <link rel="stylesheet" href="css/styles.css"/>
 </head>
 <body>
 
-<!-- TOP BAR -->
+<!-- ── Top Bar ─────────────────────────────────────────────────── -->
 <header class="topbar">
   <div class="logo">V4<span>Company</span></div>
   <div class="topbar-center">
     <h1>Gerador de Gráficos de Criativos</h1>
     <p>Configure os dados e exporte os cards em PNG</p>
   </div>
-  <button class="btn btn-primary" id="dlAllBtn" onclick="downloadAll()">
-    ↓ Baixar Todos
-  </button>
+  <button class="btn btn-primary" id="dlAllBtn">↓ Baixar Todos</button>
 </header>
 
-<!-- LAYOUT -->
+<!-- ── Main Layout ─────────────────────────────────────────────── -->
 <div class="layout">
 
-  <!-- ─── SIDEBAR ─── -->
+  <!-- ── Sidebar ───────────────────────────────────────────────── -->
   <aside class="sidebar">
 
-    <!-- Report Settings -->
     <div class="section-title">Configurações do Relatório</div>
+
     <div class="form-group">
-      <label class="form-label">Título do Relatório</label>
+      <label class="form-label" for="rptTitle">Título do Relatório</label>
       <input class="form-input" id="rptTitle" type="text"
-             value="Análise de Criativos — Performance Dashboard"
-             oninput="syncHeader()">
+             value="Análise de Criativos — Performance Dashboard"/>
     </div>
+
     <div class="form-row2">
       <div class="form-group">
-        <label class="form-label">Subtítulo</label>
+        <label class="form-label" for="rptSub">Subtítulo</label>
         <input class="form-input" id="rptSub" type="text"
-               value="Funil Lead → Venda"
-               oninput="syncHeader()">
+               value="Funil Lead → Venda"/>
       </div>
       <div class="form-group">
-        <label class="form-label">Período</label>
+        <label class="form-label" for="rptPeriod">Período</label>
         <input class="form-input" id="rptPeriod" type="text"
-               value="2025"
-               oninput="syncHeader()">
+               value="2025"/>
       </div>
     </div>
 
-    <hr class="divider">
+    <hr class="divider"/>
 
-    <!-- Creatives -->
     <div class="section-title">Criativos (<span id="cCount">0</span>)</div>
     <div class="creative-list" id="creativeList"></div>
-    <button class="btn btn-cta" onclick="addCreative()">+ Adicionar Criativo</button>
+    <button class="btn btn-cta" id="addCreativeBtn">+ Adicionar Criativo</button>
 
   </aside>
 
-  <!-- ─── PREVIEW ─── -->
+  <!-- ── Preview ───────────────────────────────────────────────── -->
   <main class="preview">
 
     <div class="preview-topbar">
       <span class="preview-label">Preview — Cards Gerados</span>
-      <button class="btn btn-primary" id="dlAllBtn2" onclick="downloadAll()">
-        ↓ Baixar todos em PNG
-      </button>
+      <button class="btn btn-primary" id="dlAllBtn2">↓ Baixar todos em PNG</button>
     </div>
 
-    <!-- Report header -->
+    <!-- Report header (synced with sidebar inputs) -->
     <div class="rpt-header" id="rptHeader">
       <div class="rpt-logo">V4<span>Company</span></div>
       <div class="rpt-right">
@@ -422,7 +80,7 @@
       </div>
     </div>
 
-    <!-- Cards -->
+    <!-- Generated cards are injected here by renderer.js -->
     <div id="cardsArea">
       <div class="empty-state" id="emptyState">
         <h3>Nenhum criativo ainda</h3>
@@ -433,490 +91,15 @@
   </main>
 </div>
 
-<script>
-/* ─── STATE ─────────────────────────────────────────────────── */
-let state = { creatives: [] };
-let charts = {};
-let uid = 0;
+<!-- ── Application scripts (load order matters) ──────────────── -->
+<script src="js/constants.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/seed.js"></script>
+<script src="js/state.js"></script>
+<script src="js/chart-manager.js"></script>
+<script src="js/renderer.js"></script>
+<script src="js/export.js"></script>
+<script src="js/app.js"></script>
 
-const RED_PALETTE = ['#e50914','#c4080f','#a3060c','#80050b','#400306','#200103','#100102'];
-
-/* ─── SEED DATA ──────────────────────────────────────────────── */
-const SEED = [
-  {
-    id: 'AD 02 · Criativo 01', name: 'Sua Fórmula Tão Boa', type: 'Vídeo',
-    kpis: [
-      { label: 'Investimento', value: 'R$ 4.836,57', color: 'white' },
-      { label: 'CPL',          value: 'R$ 107,48',   color: 'red'   },
-      { label: 'CTR',          value: '0,61%',        color: 'white' },
-      { label: 'Faturamento',  value: 'R$ 12.700',   color: 'green' }
-    ],
-    funnel: [
-      { label: 'Leads', value: 45 }, { label: 'MQL', value: 12 },
-      { label: 'Conexão', value: 5 }, { label: 'SQL', value: 3 }, { label: 'Venda', value: 2 }
-    ]
-  },
-  {
-    id: 'AD 01 · Criativo 02', name: 'Gerente de P&D', type: 'Vídeo',
-    kpis: [
-      { label: 'Investimento', value: 'R$ 744,03',  color: 'white' },
-      { label: 'CPL',          value: 'R$ 106,29',  color: 'red'   },
-      { label: 'CTR',          value: '1,06%',       color: 'white' },
-      { label: 'Faturamento',  value: 'R$ 2.700',   color: 'green' }
-    ],
-    funnel: [
-      { label: 'Leads', value: 7 }, { label: 'MQL', value: 1 },
-      { label: 'Conexão', value: 1 }, { label: 'SQL', value: 1 }, { label: 'Venda', value: 1 }
-    ]
-  },
-  {
-    id: 'AD 01 · Criativo 03', name: 'Cansado de Fornecedores Químicos', type: 'Vídeo',
-    kpis: [
-      { label: 'Investimento', value: 'R$ 1.575,27', color: 'white' },
-      { label: 'CPL',          value: 'R$ 98,45',    color: 'red'   },
-      { label: 'CTR',          value: '0,58%',        color: 'white' },
-      { label: 'Faturamento',  value: '—',            color: 'muted' }
-    ],
-    funnel: [
-      { label: 'Leads', value: 16 }, { label: 'MQL', value: 3 },
-      { label: 'Conexão', value: 2 }, { label: 'SQL', value: 0 }, { label: 'Venda', value: 0 }
-    ]
-  },
-  {
-    id: 'AD 01 · Criativo 04', name: 'Sua Formulação Nossa Expertise', type: 'Estático',
-    kpis: [
-      { label: 'Investimento', value: 'R$ 1.662,61', color: 'white' },
-      { label: 'CPL',          value: 'R$ 166,26',   color: 'red'   },
-      { label: 'CTR',          value: '0,70%',        color: 'white' },
-      { label: 'Faturamento',  value: '—',            color: 'muted' }
-    ],
-    funnel: [
-      { label: 'Leads', value: 10 }, { label: 'MQL', value: 0 },
-      { label: 'Conexão', value: 0 }, { label: 'SQL', value: 0 }, { label: 'Venda', value: 0 }
-    ]
-  },
-  {
-    id: 'AD 01 · Criativo 05', name: 'O Especialista Que Sua Formulação Precisa', type: 'Estático',
-    kpis: [
-      { label: 'Investimento', value: 'R$ 1.384,78', color: 'white' },
-      { label: 'CPL',          value: 'R$ 92,32',    color: 'red'   },
-      { label: 'CTR',          value: '1,18%',        color: 'white' },
-      { label: 'Faturamento',  value: '—',            color: 'muted' }
-    ],
-    funnel: [
-      { label: 'Leads', value: 15 }, { label: 'MQL', value: 0 },
-      { label: 'Conexão', value: 0 }, { label: 'SQL', value: 0 }, { label: 'Venda', value: 0 }
-    ]
-  },
-  {
-    id: 'AD 01 · Criativo 06', name: 'Qualidade Que Gera Resultados', type: 'Estático',
-    kpis: [
-      { label: 'Investimento', value: 'R$ 815,55',  color: 'white' },
-      { label: 'CPL',          value: 'R$ 163,11',  color: 'red'   },
-      { label: 'CTR',          value: '1,43%',       color: 'white' },
-      { label: 'Faturamento',  value: '—',           color: 'muted' }
-    ],
-    funnel: [
-      { label: 'Leads', value: 5 }, { label: 'MQL', value: 0 },
-      { label: 'Conexão', value: 0 }, { label: 'SQL', value: 0 }, { label: 'Venda', value: 0 }
-    ]
-  },
-  {
-    id: 'AD 01 · Criativo 07', name: 'No Setor Químico', type: 'Vídeo',
-    kpis: [
-      { label: 'Investimento', value: 'R$ 130,00', color: 'white' },
-      { label: 'CPL',          value: '—',          color: 'muted' },
-      { label: 'CTR',          value: '0,36%',      color: 'white' },
-      { label: 'Faturamento',  value: '—',          color: 'muted' }
-    ],
-    funnel: [
-      { label: 'Leads', value: 0 }, { label: 'MQL', value: 0 },
-      { label: 'Conexão', value: 0 }, { label: 'SQL', value: 0 }, { label: 'Venda', value: 0 }
-    ]
-  }
-];
-
-SEED.forEach(s => addCreative(s));
-
-/* ─── ADD CREATIVE ────────────────────────────────────────────── */
-function addCreative(data) {
-  const id = ++uid;
-  const c = {
-    _id: id,
-    id:   data?.id   || `Criativo ${id}`,
-    name: data?.name || `Criativo ${id}`,
-    type: data?.type || 'Vídeo',
-    kpis: (data?.kpis || [
-      { label: 'Investimento', value: 'R$ 0', color: 'white' },
-      { label: 'CPL',          value: '—',    color: 'red'   },
-      { label: 'CTR',          value: '0%',   color: 'white' },
-      { label: 'Faturamento',  value: '—',    color: 'green' }
-    ]).map(k => ({...k})),
-    funnel: (data?.funnel || [
-      { label: 'Leads', value: 0 },
-      { label: 'MQL',   value: 0 },
-      { label: 'Venda', value: 0 }
-    ]).map(f => ({...f}))
-  };
-  state.creatives.push(c);
-  buildSidebarItem(c);
-  buildCard(c);
-  updateCount();
-  hideEmpty();
-}
-
-/* ─── REMOVE CREATIVE ────────────────────────────────────────── */
-function removeCreative(id) {
-  state.creatives = state.creatives.filter(c => c._id !== id);
-  document.getElementById(`sb-${id}`)?.remove();
-  document.getElementById(`cw-${id}`)?.remove();
-  if (charts[id]) { charts[id].destroy(); delete charts[id]; }
-  updateCount();
-  if (!state.creatives.length) document.getElementById('emptyState').style.display = '';
-}
-
-/* ─── HELPERS ─────────────────────────────────────────────────── */
-function updateCount() { document.getElementById('cCount').textContent = state.creatives.length; }
-function hideEmpty()   { document.getElementById('emptyState').style.display = 'none'; }
-
-function h(s) {
-  return String(s ?? '')
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;');
-}
-
-function findC(id) { return state.creatives.find(c => c._id === id); }
-
-/* ─── SYNC HEADER ─────────────────────────────────────────────── */
-function syncHeader() {
-  const t = document.getElementById('rptTitle').value;
-  const s = document.getElementById('rptSub').value;
-  const p = document.getElementById('rptPeriod').value;
-  document.getElementById('prevTitle').textContent = t;
-  document.getElementById('prevSub').textContent   = `${s} · ${p}`;
-}
-
-/* ─── BUILD SIDEBAR ITEM ──────────────────────────────────────── */
-function buildSidebarItem(c) {
-  const el = document.createElement('div');
-  el.className = 'creative-item';
-  el.id = `sb-${c._id}`;
-  el.innerHTML = sidebarHTML(c);
-  document.getElementById('creativeList').appendChild(el);
-}
-
-function sidebarHTML(c) {
-  const id = c._id;
-  return `
-    <div class="creative-header" onclick="toggleSb(${id})">
-      <div class="creative-hd-left">
-        <span class="creative-idx">#${id}</span>
-        <span class="creative-hd-name" id="sbname-${id}">${h(c.name)}</span>
-      </div>
-      <span class="toggle-arrow">›</span>
-    </div>
-    <div class="creative-body">
-      <div class="form-group">
-        <label class="form-label">Identificador (ID)</label>
-        <input class="form-input" type="text" value="${h(c.id)}"
-               oninput="setField(${id},'id',this.value)">
-      </div>
-      <div class="form-row2">
-        <div class="form-group">
-          <label class="form-label">Nome</label>
-          <input class="form-input" type="text" value="${h(c.name)}"
-                 oninput="setField(${id},'name',this.value)">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Tipo</label>
-          <select class="form-input" onchange="setField(${id},'type',this.value)">
-            <option ${c.type==='Vídeo'   ?'selected':''}>Vídeo</option>
-            <option ${c.type==='Estático'?'selected':''}>Estático</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="sub-label">KPIs</div>
-      <div id="kpis-${id}">${c.kpis.map((k,i)=>kpiRowHTML(id,i,k)).join('')}</div>
-      <div class="row-actions">
-        <button class="btn btn-add" onclick="addKpi(${id})">+ KPI</button>
-      </div>
-
-      <div class="sub-label">Etapas do Funil</div>
-      <div id="funnel-${id}">${c.funnel.map((f,i)=>funnelRowHTML(id,i,f)).join('')}</div>
-      <div class="row-actions">
-        <button class="btn btn-add" onclick="addStage(${id})">+ Etapa</button>
-      </div>
-
-      <hr class="divider">
-      <button class="btn btn-danger" onclick="removeCreative(${id})">✕ Remover Criativo</button>
-    </div>`;
-}
-
-function kpiRowHTML(cid, idx, k) {
-  return `<div class="inline-row" style="grid-template-columns:1fr 1fr 72px auto;" id="kr-${cid}-${idx}">
-    <input class="form-input" type="text" placeholder="Label" value="${h(k.label)}"
-           oninput="setKpi(${cid},${idx},'label',this.value)">
-    <input class="form-input" type="text" placeholder="Valor" value="${h(k.value)}"
-           oninput="setKpi(${cid},${idx},'value',this.value)">
-    <select class="form-input" onchange="setKpi(${cid},${idx},'color',this.value)">
-      <option value="white" ${k.color==='white'?'selected':''}>Branco</option>
-      <option value="red"   ${k.color==='red'  ?'selected':''}>Vermelho</option>
-      <option value="green" ${k.color==='green'?'selected':''}>Verde</option>
-      <option value="muted" ${k.color==='muted'?'selected':''}>Cinza</option>
-    </select>
-    <button class="btn btn-rm" onclick="rmKpi(${cid},${idx})">✕</button>
-  </div>`;
-}
-
-function funnelRowHTML(cid, idx, f) {
-  return `<div class="inline-row" style="grid-template-columns:1fr 70px auto;" id="fr-${cid}-${idx}">
-    <input class="form-input" type="text" placeholder="Etapa" value="${h(f.label)}"
-           oninput="setFunnel(${cid},${idx},'label',this.value)">
-    <input class="form-input" type="number" placeholder="0" value="${f.value}"
-           oninput="setFunnel(${cid},${idx},'value',+this.value)">
-    <button class="btn btn-rm" onclick="rmStage(${cid},${idx})">✕</button>
-  </div>`;
-}
-
-/* ─── TOGGLE ──────────────────────────────────────────────────── */
-function toggleSb(id) {
-  document.getElementById(`sb-${id}`).classList.toggle('open');
-}
-
-/* ─── FIELD SETTERS ───────────────────────────────────────────── */
-function setField(id, field, val) {
-  const c = findC(id);
-  if (!c) return;
-  c[field] = val;
-  if (field === 'name') {
-    const el = document.getElementById(`sbname-${id}`);
-    if (el) el.textContent = val;
-  }
-  rerender(id);
-}
-
-function setKpi(id, idx, field, val) {
-  const c = findC(id);
-  if (!c || !c.kpis[idx]) return;
-  c.kpis[idx][field] = val;
-  rerender(id);
-}
-
-function setFunnel(id, idx, field, val) {
-  const c = findC(id);
-  if (!c || !c.funnel[idx]) return;
-  c.funnel[idx][field] = val;
-  rerender(id);
-}
-
-function addKpi(id) {
-  const c = findC(id);
-  if (!c) return;
-  const idx = c.kpis.length;
-  c.kpis.push({ label: 'KPI', value: '—', color: 'white' });
-  const container = document.getElementById(`kpis-${id}`);
-  container.insertAdjacentHTML('beforeend', kpiRowHTML(id, idx, c.kpis[idx]));
-  rerender(id);
-}
-
-function rmKpi(id, idx) {
-  const c = findC(id);
-  if (!c) return;
-  c.kpis.splice(idx, 1);
-  document.getElementById(`kpis-${id}`).innerHTML = c.kpis.map((k,i) => kpiRowHTML(id,i,k)).join('');
-  rerender(id);
-}
-
-function addStage(id) {
-  const c = findC(id);
-  if (!c) return;
-  const idx = c.funnel.length;
-  c.funnel.push({ label: 'Etapa', value: 0 });
-  const container = document.getElementById(`funnel-${id}`);
-  container.insertAdjacentHTML('beforeend', funnelRowHTML(id, idx, c.funnel[idx]));
-  rerender(id);
-}
-
-function rmStage(id, idx) {
-  const c = findC(id);
-  if (!c) return;
-  c.funnel.splice(idx, 1);
-  document.getElementById(`funnel-${id}`).innerHTML = c.funnel.map((f,i) => funnelRowHTML(id,i,f)).join('');
-  rerender(id);
-}
-
-/* ─── BUILD / RE-RENDER CARD ──────────────────────────────────── */
-function buildCard(c) {
-  const wrapper = document.createElement('div');
-  wrapper.id    = `cw-${c._id}`;
-  wrapper.innerHTML = cardHTML(c);
-  document.getElementById('cardsArea').appendChild(wrapper);
-  initChart(c);
-}
-
-function rerender(id) {
-  const c = findC(id);
-  if (!c) return;
-  const wrapper = document.getElementById(`cw-${id}`);
-  if (!wrapper) return;
-  if (charts[id]) { charts[id].destroy(); delete charts[id]; }
-  wrapper.innerHTML = cardHTML(c);
-  initChart(c);
-}
-
-function cardHTML(c) {
-  const id     = c._id;
-  const labels = c.funnel.map(f => f.label);
-  const values = c.funnel.map(f => Number(f.value) || 0);
-  const isVid  = c.type === 'Vídeo';
-
-  const pcts = values.map((v, j) => {
-    if (j === 0) return '';
-    const prev = values[j - 1];
-    return prev > 0 ? Math.round((v / prev) * 100) + '%' : '0%';
-  });
-
-  const kpiHTML = c.kpis.map(k => `
-    <div class="kpi">
-      <div class="kpi-lbl">${h(k.label)}</div>
-      <div class="kpi-val ${k.color}">${h(k.value)}</div>
-    </div>`).join('');
-
-  const stageHTML = labels.map((lbl, j) => `
-    ${j > 0 ? `<div class="stage-arrow">›</div>` : ''}
-    <div class="stage-item">
-      <span class="stage-val">${values[j]}</span>
-      <span class="stage-lbl">${h(lbl)}</span>
-      ${pcts[j] ? `<span class="stage-pct">↓ ${pcts[j]}</span>` : ''}
-    </div>`).join('');
-
-  // chart height: 40px per stage, min 160, max 320
-  const chartH = Math.min(320, Math.max(160, labels.length * 42));
-
-  return `
-    <div class="card" id="card-${id}">
-      <div class="card-head">
-        <div class="card-meta">
-          <div class="card-num">${h(c.id)}</div>
-          <div class="card-name">${h(c.name)}</div>
-        </div>
-        <div class="type-badge ${isVid?'video':'static'}">${h(c.type)}</div>
-      </div>
-
-      <div class="kpis">${kpiHTML}</div>
-
-      <div class="chart-area" style="height:${chartH}px;">
-        <canvas id="chart-${id}"></canvas>
-      </div>
-
-      <div class="stage-row">${stageHTML}</div>
-
-      <button class="dl-btn" id="dlbtn-${id}"
-              onclick="downloadCard(${id}, '${c.name.replace(/'/g,"\\'").replace(/"/g,'\\"')}')">
-        ↓ &nbsp;Baixar PNG — ${h(c.name)}
-      </button>
-    </div>`;
-}
-
-/* ─── INIT CHART ──────────────────────────────────────────────── */
-function initChart(c) {
-  const id     = c._id;
-  const labels = c.funnel.map(f => f.label);
-  const values = c.funnel.map(f => Number(f.value) || 0);
-  const canvas = document.getElementById(`chart-${id}`);
-  if (!canvas) return;
-
-  charts[id] = new Chart(canvas.getContext('2d'), {
-    type: 'bar',
-    data: {
-      labels,
-      datasets: [{
-        label: 'Volume',
-        data:  values,
-        backgroundColor: RED_PALETTE.slice(0, values.length),
-        borderColor:     'transparent',
-        borderRadius:    5,
-        borderSkipped:   false,
-        barThickness:    24
-      }]
-    },
-    options: {
-      responsive:          true,
-      maintainAspectRatio: false,
-      indexAxis:           'y',
-      animation:           { duration: 250 },
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          backgroundColor: '#111', titleColor: '#e50914', bodyColor: '#fff',
-          borderColor: '#222', borderWidth: 1, padding: 10,
-          titleFont: { family: 'Montserrat', weight: '800', size: 13 },
-          bodyFont:  { family: 'Montserrat', size: 12 },
-          callbacks: {
-            label: ctx => {
-              const base = values[0];
-              const pct  = base > 0 ? ` · ${Math.round((ctx.parsed.y / base) * 100)}% dos leads` : '';
-              return `  ${ctx.parsed.y} unidades${pct}`;
-            }
-          }
-        }
-      },
-      scales: {
-        x: {
-          grid:   { color: 'rgba(255,255,255,0.05)', drawBorder: false },
-          border: { display: false },
-          ticks:  { color: '#6b6b6b', font: { family: 'Montserrat', size: 11 }, precision: 0 },
-          beginAtZero: true
-        },
-        y: {
-          grid:   { color: 'rgba(0,0,0,0)', drawBorder: false },
-          border: { display: false },
-          ticks:  { color: '#9a9a9a', font: { family: 'Montserrat', size: 12, weight: '700' }, maxRotation: 0 }
-        }
-      }
-    }
-  });
-}
-
-/* ─── DOWNLOAD SINGLE ─────────────────────────────────────────── */
-async function downloadCard(id, name) {
-  const card = document.getElementById(`card-${id}`);
-  const btn  = document.getElementById(`dlbtn-${id}`);
-  const orig = btn.innerHTML;
-  btn.innerHTML = 'Gerando PNG…';
-  btn.disabled  = true;
-  try {
-    const cv = await html2canvas(card, { backgroundColor: '#0d0d0d', scale: 3, useCORS: true, logging: false });
-    const a  = document.createElement('a');
-    a.download = `v4-criativo-${id}-${name.toLowerCase().replace(/[\s&]/g,'-').replace(/[^a-z0-9-]/g,'')}.png`;
-    a.href = cv.toDataURL('image/png');
-    a.click();
-  } catch(e) { alert('Erro ao gerar PNG.'); }
-  finally { btn.innerHTML = orig; btn.disabled = false; }
-}
-
-/* ─── DOWNLOAD ALL ────────────────────────────────────────────── */
-async function downloadAll() {
-  if (!state.creatives.length) { alert('Nenhum criativo para baixar.'); return; }
-  const btns = [document.getElementById('dlAllBtn'), document.getElementById('dlAllBtn2')];
-  btns.forEach(b => { b.textContent = 'Gerando…'; b.disabled = true; });
-
-  for (const c of state.creatives) {
-    const card = document.getElementById(`card-${c._id}`);
-    if (!card) continue;
-    const cv = await html2canvas(card, { backgroundColor: '#0d0d0d', scale: 3, useCORS: true, logging: false });
-    const a  = document.createElement('a');
-    a.download = `v4-criativo-${c._id}-${c.name.toLowerCase().replace(/[\s&]/g,'-').replace(/[^a-z0-9-]/g,'')}.png`;
-    a.href = cv.toDataURL('image/png');
-    a.click();
-    await new Promise(r => setTimeout(r, 400));
-  }
-
-  btns[0].innerHTML = '↓ Baixar Todos';
-  btns[1].innerHTML = '↓ Baixar todos em PNG';
-  btns.forEach(b => { b.disabled = false; });
-}
-</script>
 </body>
 </html>
