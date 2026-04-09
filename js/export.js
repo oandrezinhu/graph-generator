@@ -18,8 +18,9 @@ async function downloadCard(creativeId, creativeName) {
   const button = document.getElementById(`dlbtn-${creativeId}`);
   const originalLabel = button.innerHTML;
 
-  button.innerHTML = 'Gerando PNG…';
-  button.disabled  = true;
+  button.innerHTML    = 'Gerando PNG…';
+  button.disabled     = true;
+  button.style.visibility = 'hidden';
 
   try {
     const canvas = await captureElement(card);
@@ -28,8 +29,9 @@ async function downloadCard(creativeId, creativeName) {
     console.error('Falha ao capturar card como PNG:', error);
     alert('Erro ao gerar PNG. Tente novamente.');
   } finally {
-    button.innerHTML = originalLabel;
-    button.disabled  = false;
+    button.style.visibility = '';
+    button.innerHTML        = originalLabel;
+    button.disabled         = false;
   }
 }
 
@@ -51,10 +53,14 @@ async function downloadAll() {
 
   try {
     for (const creative of creatives) {
-      const card = document.getElementById(`card-${creative._id}`);
+      const card       = document.getElementById(`card-${creative._id}`);
+      const cardButton = document.getElementById(`dlbtn-${creative._id}`);
       if (!card) continue;
 
+      cardButton.style.visibility = 'hidden';
       const canvas = await captureElement(card);
+      cardButton.style.visibility = '';
+
       triggerDownload(canvas, buildFilename(creative._id, creative.name));
       await delay(EXPORT_CONFIG.DELAY_MS);
     }

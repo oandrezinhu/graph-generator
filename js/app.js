@@ -246,8 +246,6 @@ function init() {
   // Event delegation — preview cards
   document.getElementById('cardsArea').addEventListener('click', handlePreviewClick);
 
-  // Populate with seed data
-  SEED_CREATIVES.forEach(seedData => addCreative(seedData));
 }
 
 document.addEventListener('DOMContentLoaded', init);
